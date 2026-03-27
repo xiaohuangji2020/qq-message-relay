@@ -2,8 +2,14 @@ const WebSocket = require("ws");
 
 // 这里的端口 4000 对应你 docker run 时的 -p 4000:3000
 const url = "ws://localhost:4000";
+const token = "Hla08ROitNH2Y4NC";
 
-const ws = new WebSocket(url);
+
+const ws = new WebSocket(url, {
+    headers: {
+        'Authorization': `Bearer ${token}`
+    }
+});
 
 ws.on("open", () => {
   console.log("✅ 已成功连接到 NapCatQQ，开始截取实时消息...");
