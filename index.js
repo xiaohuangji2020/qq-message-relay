@@ -32,20 +32,33 @@ function connect() {
       console.error("⚠️ 收到无法解析的数据:", e.message);
       return;
     }
-    console.log(msg);
-
     const parsed = parseMessage(msg);
     if (!parsed) return;
 
     const time = parsed.time.toLocaleString();
-    const { channel, contentType, nickname, userId, rawMessage } = parsed;
 
-    if (channel === "group") {
-      console.log(`\n[${time}] 👥 群聊(${parsed.groupId}) [${contentType}]`);
-      console.log(`${nickname}(${userId}): ${rawMessage}`);
-    } else if (channel === "private") {
-      console.log(`\n[${time}] 👤 私聊 [${contentType}]`);
-      console.log(`${nickname}(${userId}): ${rawMessage}`);
+    if (parsed.postType === "message") {
+      const { channel, contentType, nickname, userId, rawMessage } = parsed;
+      if (channel === "group") {
+        console.log(`\n[${time}] 👥 群聊(${parsed.groupId}) [${contentType}]`);
+        console.log(`${nickname}(${userId}): ${rawMessage}`);
+      } else if (channel === "private") {
+        console.log(`\n[${time}] 👤 私聊 [${contentType}]`);
+        console.log(`${nickname}(${userId}): ${rawMessage}`);
+      }
+    } else if (parsed.postType === "notice") {
+      const { noticeType, subType, userId, groupId } = parsed;
+      const suffix = subType ? `/${subType}` : "";
+      const scope = groupId ? `群(${groupId}) ` : "";
+      console.log(`\n[${time}] 🔔 通知 ${scope}[${noticeType}${suffix}] user=${userId}`);
+    } else if (parsed.postType === "request") {
+      const { requestType, subType, userId, groupId, comment } = parsed;
+      if (requestType === "friend") {
+        console.log(`\n[${time}] 🤝 加好友请求 user=${userId} 验证: ${comment}`);
+      } else if (requestType === "group") {
+        const action = subType === "invite" ? "邀请入群" : "申请入群";
+        console.log(`\n[${time}] 🚪 ${action} 群(${groupId}) user=${userId} 验证: ${comment}`);
+      }
     }
   });
 

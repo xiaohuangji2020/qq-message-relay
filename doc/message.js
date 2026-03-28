@@ -39,7 +39,7 @@ const msg2 = {
   group_name: '心，我的愿'
 }
 
-// 添加好友消息
+// 添加好友成功消息
 const msg4 = {
   self_id: 3570343501,
   user_id: 363514302,
@@ -121,4 +121,15 @@ const msg7 = {
   message_format: 'array',
   post_type: 'message',
   target_id: 363514302
+}
+
+// 添加好友请求
+const msg8 = {
+  time: 1774717965,
+  self_id: 3570343501,
+  post_type: 'request',
+  request_type: 'friend',
+  user_id: 1557672359,
+  comment: '我是篱音®碎风♂',
+  flag: '1774717964'
 }
