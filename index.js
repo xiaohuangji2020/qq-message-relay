@@ -37,6 +37,7 @@ function connect() {
       const sender = msg.sender.nickname || "未知用户";
       const content = msg.raw_message;
 
+      console.log('msg', msg)
       if (msg.message_type === "group") {
         console.log(`\n[${time}] 👥 群聊(${msg.group_id})`);
         console.log(`${sender}(${msg.user_id}): ${content}`);
