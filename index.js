@@ -1,4 +1,5 @@
 const WebSocket = require("ws");
+const { parseMessage } = require("./messageParser");
 
 // 配置项：通过环境变量注入，也可保留默认值
 const url = process.env.NAPCAT_WS_URL || "ws://localhost:4000";
@@ -31,20 +32,20 @@ function connect() {
       console.error("⚠️ 收到无法解析的数据:", e.message);
       return;
     }
+    console.log(msg);
 
-    if (msg.post_type === "message") {
-      const time = new Date().toLocaleString();
-      const sender = msg.sender.nickname || "未知用户";
-      const content = msg.raw_message;
+    const parsed = parseMessage(msg);
+    if (!parsed) return;
 
-      console.log('msg', msg)
-      if (msg.message_type === "group") {
-        console.log(`\n[${time}] 👥 群聊(${msg.group_id})`);
-        console.log(`${sender}(${msg.user_id}): ${content}`);
-      } else if (msg.message_type === "private") {
-        console.log(`\n[${time}] 👤 私聊`);
-        console.log(`${sender}(${msg.user_id}): ${content}`);
-      }
+    const time = parsed.time.toLocaleString();
+    const { channel, contentType, nickname, userId, rawMessage } = parsed;
+
+    if (channel === "group") {
+      console.log(`\n[${time}] 👥 群聊(${parsed.groupId}) [${contentType}]`);
+      console.log(`${nickname}(${userId}): ${rawMessage}`);
+    } else if (channel === "private") {
+      console.log(`\n[${time}] 👤 私聊 [${contentType}]`);
+      console.log(`${nickname}(${userId}): ${rawMessage}`);
     }
   });
 
