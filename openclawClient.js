@@ -3,15 +3,15 @@ const http = require('http');
 
 const OPENCLAW_URL = process.env.OPENCLAW_URL || 'http://localhost:21234/v1/chat/completions';
 const OPENCLAW_TOKEN = process.env.OPENCLAW_TOKEN;
-const OPENCLAW_SESSION_KEY = process.env.OPENCLAW_SESSION_KEY;
 const OPENCLAW_MODEL = process.env.OPENCLAW_MODEL || 'openclaw/cyan_clone';
 
 /**
  * 发送消息给 OpenClaw，返回回复文本
  * @param {string} text 用户消息文本
+ * @param {string} sessionKey 会话 key，格式 agent:cyan_clone:<group|user>:<id>
  * @returns {Promise<string>} 回复内容
  */
-function askOpenclaw(text) {
+function askOpenclaw(text, sessionKey) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
       model: OPENCLAW_MODEL,
@@ -27,7 +27,7 @@ function askOpenclaw(text) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENCLAW_TOKEN}`,
-        'x-openclaw-session-key': OPENCLAW_SESSION_KEY,
+        'x-openclaw-session-key': sessionKey,
         'Content-Length': Buffer.byteLength(body),
       },
     };

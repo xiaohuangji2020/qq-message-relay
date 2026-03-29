@@ -49,7 +49,10 @@ function connect() {
         logger.log(`${nickname}(${userId}): ${rawMessage}`);
       }
       if (rawMessage) {
-        askOpenclaw(rawMessage).then((reply) => {
+        const sessionKey = channel === 'group'
+          ? `agent:cyan_clone:qq:group:${parsed.groupId}`
+          : `agent:cyan_clone:qq:user:${userId}`;
+        askOpenclaw(rawMessage, sessionKey).then((reply) => {
           logger.log(`🤖 OpenClaw 回复: ${reply}`);
           if (channel === "private") {
             ws.send(JSON.stringify({
