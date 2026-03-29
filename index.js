@@ -52,12 +52,28 @@ function connect() {
       const scope = groupId ? `群(${groupId}) ` : "";
       console.log(`\n[${time}] 🔔 通知 ${scope}[${noticeType}${suffix}] user=${userId}`);
     } else if (parsed.postType === "request") {
-      const { requestType, subType, userId, groupId, comment } = parsed;
+      const { requestType, subType, userId, groupId, comment, flag } = parsed;
       if (requestType === "friend") {
         console.log(`\n[${time}] 🤝 加好友请求 user=${userId} 验证: ${comment}`);
+        console.log(`  ⏳ 将在 10 分钟后自动同意`);
+        setTimeout(() => {
+          ws.send(JSON.stringify({
+            action: "set_friend_add_request",
+            params: { flag, approve: true, remark: "AI自动通过" },
+          }));
+          console.log(`✅ 已自动同意好友请求 user=${userId}`);
+        }, 10 * 60 * 1000);
       } else if (requestType === "group") {
         const action = subType === "invite" ? "邀请入群" : "申请入群";
         console.log(`\n[${time}] 🚪 ${action} 群(${groupId}) user=${userId} 验证: ${comment}`);
+        console.log(`  ⏳ 将在 10 分钟后自动同意`);
+        setTimeout(() => {
+          ws.send(JSON.stringify({
+            action: "set_group_add_request",
+            params: { flag, sub_type: subType, approve: true },
+          }));
+          console.log(`✅ 已自动同意${action} 群(${groupId}) user=${userId}`);
+        }, 10 * 60 * 1000);
       }
     }
   });
