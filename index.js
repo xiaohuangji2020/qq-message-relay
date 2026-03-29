@@ -1,6 +1,7 @@
 const logger = require('./logger');
 const WebSocket = require("ws");
 const { parseMessage } = require("./messageParser");
+const { askOpenclaw } = require("./openclawClient");
 
 // 配置项：通过环境变量注入，也可保留默认值
 const url = process.env.NAPCAT_WS_URL || "ws://localhost:4000";
@@ -46,6 +47,24 @@ function connect() {
       } else if (channel === "private") {
         logger.log(`\n[${time}] 👤 私聊 [${contentType}]`);
         logger.log(`${nickname}(${userId}): ${rawMessage}`);
+      }
+      if (rawMessage) {
+        askOpenclaw(rawMessage).then((reply) => {
+          logger.log(`🤖 OpenClaw 回复: ${reply}`);
+          if (channel === "private") {
+            ws.send(JSON.stringify({
+              action: "send_private_msg",
+              params: { user_id: userId, message: reply },
+            }));
+          } else if (channel === "group") {
+            ws.send(JSON.stringify({
+              action: "send_group_msg",
+              params: { group_id: parsed.groupId, message: reply },
+            }));
+          }
+        }).catch((e) => {
+          logger.error(`❌ OpenClaw 请求失败: ${e.message}`);
+        });
       }
     } else if (parsed.postType === "notice") {
       const { noticeType, subType, userId, groupId } = parsed;
