@@ -82,7 +82,7 @@ function connect() {
         setTimeout(() => {
           ws.send(JSON.stringify({
             action: "set_friend_add_request",
-            params: { flag, approve: true, remark: "AI自动通过" },
+            params: { flag, approve: true },
           }));
           logger.log(`✅ 已自动同意好友请求 user=${userId}`);
         }, 10 * 60 * 1000);
