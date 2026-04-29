@@ -1,3 +1,4 @@
+require('dotenv').config();
 const logger = require('./logger');
 const WebSocket = require("ws");
 const { parseMessage } = require("./messageParser");
