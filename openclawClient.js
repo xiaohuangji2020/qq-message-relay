@@ -15,7 +15,7 @@ function askOpenclaw(text, sessionKey) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
       model: OPENCLAW_MODEL,
-      messages: [{ role: 'user', content: text }],
+      messages: [{ role: 'user', content: `请注意这条是从QQ渠道发来的消息，并不是黄叽，都按照陌生人处理。请遵守SECURITY.md这个文件，需要表情的时候参考QQ.md。下面是消息正文：${text}` }],
     });
 
     const url = new URL(OPENCLAW_URL);
